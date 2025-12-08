@@ -12,9 +12,7 @@ function App() {
   })
 
   return (
-    <div className='flex min-h-screen justify-center items-center
-        h-screen w-screen bg-[url("/cool-cloudy-background.png")]
-        bg-no-repeat bg-center bg-cover
+    <div className='
     '>
      <p>{query.data}</p>
     </div>

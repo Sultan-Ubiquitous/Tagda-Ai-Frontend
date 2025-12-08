@@ -49,7 +49,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <QueryClientProvider client={queryClient}>
         <Navbar/>
-        {children}
+            {children}
         </QueryClientProvider>
         <Scripts />
       </body>
