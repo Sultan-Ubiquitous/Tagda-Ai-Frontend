@@ -1,5 +1,5 @@
-import ChatInterface from "./builder/ChatInterface"
-import CodeWorkspace from "./builder/CodeWorkspace"
+import ChatInterface from "../builder/ChatInterface"
+import CodeWorkspace from "../builder/CodeWorkspace"
 
 
 

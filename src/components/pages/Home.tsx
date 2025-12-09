@@ -10,7 +10,7 @@ export default function Home() {
   const [text, setText] = useState("");
   const { setPrompt, prompt } = useInitialPromptStore();
   const navigate = useNavigate();
-  const {setResponse: setTemplateResponse} = useTemplatePromptStore();
+  const {setResponse: setTemplateResponse, response: templateResponse} = useTemplatePromptStore();
   const {setResponse: setChatResponse} = useChatResponseStore();
 
   const templateMutation = useMutation({
@@ -30,10 +30,10 @@ export default function Home() {
 });
 
   const chatMutation = useMutation({
-  mutationFn: async (chatPrompt: any) => {
+  mutationFn: async (messages: any) => {
     const res = await axios.post(
       "http://localhost:8008/test_chat",
-      {chatPrompt: chatPrompt},
+      {messages},
       {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
@@ -52,6 +52,25 @@ export default function Home() {
     console.log("Submitted:", prompt);
 
     await templateMutation.mutateAsync();
+    
+    let messages = [];
+    if(templateResponse?.prompts){
+      templateResponse.prompts.forEach((templatePrompt)=>{
+        messages.push({
+          role:"user",
+          content: templatePrompt
+        })
+      })
+    }
+
+    if(prompt){
+      messages.push({
+        role: "user",
+        content: prompt
+      });
+    }
+    console.log(messages);
+    
     await chatMutation.mutateAsync("Just a test, lyt ninja");
 
     navigate({to: "/builder"});

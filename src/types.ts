@@ -4,7 +4,10 @@ export type Message = {
   content: string;
 };
 
-
+export type StepItemProps = {
+  step: Step;
+  onToggle?: () => void;
+};
 
 export interface ParsedAction {
   type: string;
@@ -12,6 +15,13 @@ export interface ParsedAction {
   content: string;
 }
 
+export interface FileItem {
+  name: string;
+  type: "file" | "folder";
+  children?: FileItem[];
+  content?: string;
+  path: string;
+}
 
 export interface Step {
   id: number;

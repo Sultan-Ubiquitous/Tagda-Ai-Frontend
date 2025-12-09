@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useChatResponseStore, useInitialPromptStore, useStepStore, useTemplatePromptStore } from "@/store";
-import { Step, StepType, Message } from "@/types";
+import { Message, } from "@/types";
 import { parseAgentActionsToSteps } from "@/lib/parser";
-
+import { StepItem } from "../StepItem";
 
 const initialMessages: Message[] = [
   {
@@ -13,47 +13,9 @@ const initialMessages: Message[] = [
   },
 ];
 
-type StepItemProps = {
-  step: Step;
-  onToggle?: () => void;
-};
 
-const StepItem = ({ step, onToggle }: StepItemProps) => {
-  const isDone = step.status === "completed";
 
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className="w-full text-left px-3 py-2 flex items-start gap-2 text-xs hover:bg-gray-50"
-    >
-      <div
-        className={[
-          "mt-0.5 h-3 w-3 border border-black rounded-sm shrink-0",
-          isDone ? "bg-black" : "",
-        ].join(" ")}
-      />
-      <div className="flex-1">
-        <div className="flex justify-between items-center mb-0.5">
-          <span className="font-medium">
-            {step.type === StepType.CreateFile ? "Create file" : "Run script"}
-          </span>
-          <span className="text-[10px] text-gray-500">
-            {isDone ? "Completed" : "Pending"}
-          </span>
-        </div>
-        {step.path && (
-          <div className="font-mono text-[11px] mb-0.5">
-            {step.path}
-          </div>
-        )}
-        <div className="text-[11px] text-gray-600 line-clamp-2">
-          {step.description}
-        </div>
-      </div>
-    </button>
-  );
-};
+
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
@@ -108,15 +70,6 @@ const ChatInterface = () => {
     setInput("");
   };
 
-  const toggleStepStatus = (id: number) => {
-    setSteps(
-      steps.map((step) => step.id === id ? {
-        ...step,
-        status: step.status === "completed" ? "pending" : "completed",
-      } : step)
-    )
-  };
-
   const completedCount = steps.filter((s) => s.status === "completed").length;
 
   return (
@@ -153,7 +106,6 @@ const ChatInterface = () => {
               <StepItem
                 key={step.id}
                 step={step}
-                onToggle={() => toggleStepStatus(step.id)}
               />
             ))}
           </div>

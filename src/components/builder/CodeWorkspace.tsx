@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
 import { JSX } from "react";
 import { useStepStore } from "@/store";
-import { Step, StepType } from "@/types";
+import { Step, StepType, FileItem } from "@/types";
 
-export interface FileItem {
-  name: string;
-  type: "file" | "folder";
-  children?: FileItem[];
-  content?: string;
-  path: string;
-}
+
 
 const CodeWorkspace = () => {
   const { steps, setSteps } = useStepStore();
@@ -265,7 +259,7 @@ const CodeWorkspace = () => {
 
         {/* Status bar */}
         <footer className="border-t border-black px-3 py-1.5 text-[10px] flex items-center justify-between text-gray-600">
-          <span>Bolt-style Builder • Local workspace</span>
+          <span>Tagda AI</span>
           <span>{selectedFile ? "Ready" : "No file selected"}</span>
         </footer>
       </section>
