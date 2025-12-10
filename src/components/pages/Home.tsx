@@ -17,7 +17,7 @@ export default function Home() {
   mutationFn: async () => {
     const templatePromptRequest = {prompt: prompt} ;
     const res = await axios.post( 
-      "http://localhost:8008/template",
+      "http://localhost:8008/test_template",
       templatePromptRequest,
       {
         withCredentials: true,
@@ -32,7 +32,7 @@ export default function Home() {
   const chatMutation = useMutation({
   mutationFn: async (messages: any) => {
     const res = await axios.post(
-      "http://localhost:8008/chat",
+      "http://localhost:8008/test_chat",
       {messages},
       {
         withCredentials: true,
@@ -73,7 +73,7 @@ export default function Home() {
     
     await chatMutation.mutateAsync(messages);
 
-    // navigate({to: "/builder"});
+    navigate({to: "/builder"});
     }
   };
 
