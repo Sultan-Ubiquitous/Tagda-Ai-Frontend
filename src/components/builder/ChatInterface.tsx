@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
-import { useChatResponseStore, useInitialPromptStore, useStepStore, useTemplatePromptStore } from "@/store";
-import { Message, } from "@/types";
+import {
+  useChatResponseStore,
+  useInitialPromptStore,
+  useStepStore,
+  useTemplatePromptStore,
+} from "@/store";
+import { Message } from "@/types";
 import { parseAgentActionsToSteps } from "@/lib/parser";
 import { StepItem } from "../StepItem";
 
@@ -13,43 +18,34 @@ const initialMessages: Message[] = [
   },
 ];
 
-
-
-
-
 const ChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
 
   const { prompt } = useInitialPromptStore();
-  const {response} = useTemplatePromptStore();
-  const {steps, setSteps} = useStepStore();
-  const {response: chatResponse} = useChatResponseStore();
-  
+  const { response } = useTemplatePromptStore();
+  const { steps, setSteps } = useStepStore();
+  const { response: chatResponse } = useChatResponseStore();
 
   useEffect(() => {
     if (response?.uiPrompts?.[0]) {
       const parsed = parseAgentActionsToSteps(response.uiPrompts[0]);
       setSteps(parsed);
     }
-  }, [response]);
+  }, [response, setSteps]);
 
   useEffect(() => {
-    if(chatResponse){
+    if (chatResponse) {
       const chatSteps = parseAgentActionsToSteps(chatResponse);
       setSteps(chatSteps);
     }
-  }, [chatResponse]);
-
-  
+  }, [chatResponse, setSteps]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
-    
-    const nextId = messages.length
-      ? messages[messages.length - 1].id + 1
-      : 1;
+
+    const nextId = messages.length ? messages[messages.length - 1].id + 1 : 1;
 
     const userMessage: Message = {
       id: nextId,
@@ -73,7 +69,8 @@ const ChatInterface = () => {
   const completedCount = steps.filter((s) => s.status === "completed").length;
 
   return (
-    <div className="flex flex-col h-full bg-white text-black text-sm">
+    // Lock the whole interface to the screen height
+    <div className="flex flex-col h-screen max-h-screen bg-white text-black text-sm">
       {/* Header */}
       <header className="border-b border-black px-3 py-2 flex items-center justify-between">
         <div className="flex flex-col">
@@ -83,8 +80,8 @@ const ChatInterface = () => {
         <span className="text-xs text-gray-500">AI Builder</span>
       </header>
 
-      {/* Scrollable main content */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+      {/* Main content – no scroll here, scroll lives in inner sections */}
+      <div className="flex-1 px-3 py-3 space-y-4 overflow-hidden">
         {/* Request */}
         <section className="border border-gray-300 rounded p-3">
           <div className="text-xs uppercase text-gray-500 mb-1">Request</div>
@@ -101,28 +98,31 @@ const ChatInterface = () => {
               {completedCount}/{steps.length} completed
             </span>
           </div>
-          <div className="border border-gray-300 rounded divide-y divide-gray-200">
-            {steps.map((step) => (
-              <StepItem
-                key={step.id}
-                step={step}
-              />
-            ))}
+
+          {/* Scrollable steps area with fixed max height */}
+          <div className="border border-gray-300 rounded">
+            <div className="max-h-[35vh] overflow-y-auto divide-y divide-gray-200">
+              {steps.map((step) => (
+                <StepItem key={step.id} step={step} />
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* Conversation */}
-        <section className="space-y-3">
-          {messages.map((m) => (
-            <div key={m.id} className="space-y-1">
-              <div className="text-xs text-gray-500">
-                {m.role === "user" ? "You" : "AI"}
+        {/* Conversation – its own scroll area */}
+        <section className="flex-1 min-h-0">
+          <div className="max-h-[40vh] overflow-y-auto space-y-3 pr-1">
+            {messages.map((m) => (
+              <div key={m.id} className="space-y-1">
+                <div className="text-xs text-gray-500">
+                  {m.role === "user" ? "You" : "AI"}
+                </div>
+                <div className="border border-gray-300 rounded p-2 leading-relaxed whitespace-pre-wrap">
+                  {m.content}
+                </div>
               </div>
-              <div className="border border-gray-300 rounded p-2 leading-relaxed whitespace-pre-wrap">
-                {m.content}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </section>
       </div>
 
